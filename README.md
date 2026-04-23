@@ -1,4 +1,6 @@
-## Em desenvolvimento
+# OTServer Custom
+
+Projeto pessoal de customização de OTServer com alterações em C++, Lua e integração futura com banco de dados.
 
 Atualmente estou desenvolvendo um sistema mais avançado de controle de summons, com foco em mecânicas de gameplay e integração com banco de dados.
 
