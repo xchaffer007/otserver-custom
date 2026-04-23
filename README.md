@@ -1,15 +1,16 @@
 # OTServer Custom
 
 Projeto pessoal baseado em um OTServer open source, com foco em customização de sistemas, modificação de core em C++ e integração client-server.
-## Demonstração
 
 ### Expansão da área visível (modificação de engine + client)
+## Demonstração
 
-#### Antes (padrão)
-![Antes](before.png)
+### Antes vs Depois
 
-#### Depois (modificado)
-![Depois](after.png)
+<p align="center">
+  <img src="before.png" width="45%" />
+  <img src="after.png" width="45%" />
+</p>
 
 ### Core (C++)
 - Alterações em `src/monster.cpp` e `src/monster.h`
