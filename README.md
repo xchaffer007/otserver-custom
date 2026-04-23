@@ -1,25 +1,45 @@
-## Base do projeto
+# OTServer Custom
 
-Este projeto utiliza como base um OTServer open source, com foco em customizações e estudo de sistemas.
+Projeto pessoal baseado em um OTServer open source, com foco em customização de sistemas, modificação de core em C++ e integração client-server.
 
 ## Minhas modificações
 
-- Alterações em `src/monster.cpp` e `src/monster.h` para lógica de foco em summons
-- Alterações em `src/map.h` e `src/const.h` para aumentar a quantidade de tiles enviados ao client
-- Ajustes para suporte a gameplay fullscreen
-- Scripts Lua para testes de summon, movimentação e efeitos
-- Estudos de integração com banco de dados para progressão de summon
+### Core (C++)
+- Alterações em `src/monster.cpp` e `src/monster.h`
+- Ajuste na lógica de foco dos monstros para priorizar summons
+
+- Alterações em `src/map.h` e `src/const.h`
+- Expansão da quantidade de tiles enviados ao client (fullscreen gameplay)
+
+### Scripts (Lua)
+- Desenvolvimento de scripts para sistema de summon
+- Testes de movimentação e efeitos
+- Integração com eventos de login
+
+### Client (OTClient)
+As modificações do client estão em `client_mods/`
+
+- Ajuste na renderização de tiles
+- Alterações no volume de dados recebidos
+- Preparação para controle de summon via input
 
 ## Em desenvolvimento
 
-Estou desenvolvendo um sistema avançado de summons com:
+Atualmente desenvolvendo um sistema avançado de summons:
 
-- Relação entre summon e owner
-- Progressão de habilidades
+- Relação entre jogador (owner) e summon
+- Sistema de progressão
 - Movimentação controlada pelo jogador
-- Persistência de dados em banco
-- Integração client-server
+- Persistência em banco de dados
+- Integração completa client-server
+
+## Tecnologias
+
+- C++
+- Lua
+- Git
+- Uso de IA como apoio para debugging e aprendizado
 
 ## Objetivo
 
-Demonstrar prática com C++, Lua, arquitetura client-server, modificação de core e desenvolvimento de sistemas de gameplay.
+Projeto focado em prática real de desenvolvimento, modificação de sistemas existentes e construção de mecânicas de gameplay.
