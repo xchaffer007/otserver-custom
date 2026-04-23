@@ -1,6 +1,7 @@
-# OTServer Custom
+## Sobre o projeto
 
-Projeto pessoal de customização de OTServer com alterações em C++, Lua e integração client-server.
+Este projeto é baseado em um servidor open source de OTServer/TFS, utilizado como base de estudo e customização.
+Meu foco neste repositório é demonstrar modificações no core, scripts Lua e integração client-server.
 
 ## Modificações implementadas
 
