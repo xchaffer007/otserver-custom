@@ -181,3 +181,21 @@ pip-log.txt
 ## TFS / OT
 #############
 config.lua
+# mapas e assets pesados
+*.otbm
+*.otgz
+
+# client files
+*.dat
+*.spr
+
+# logs/cache do servidor
+*.log
+*.cache
+
+# arquivos locais
+config.lua
+config.lua.dist
+
+# arquivos lixo comuns
+*Novo Documento de Texto.txt
