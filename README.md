@@ -1,6 +1,6 @@
-# OTServer Custom
+## Base do projeto
 
-Projeto pessoal baseado em um OTServer open source, usado para estudo e customização de mecânicas em C++, Lua e integração client-server.
+Este projeto utiliza como base um OTServer open source, com foco em customizações e estudo de sistemas.
 
 ## Minhas modificações
 
