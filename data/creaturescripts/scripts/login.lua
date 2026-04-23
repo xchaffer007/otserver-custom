@@ -1,4 +1,7 @@
 function onLogin(player)
+	player:registerEvent("MamodoControlOpcode")
+	player:setStorageValue(50000, 0)
+
 	local serverName = configManager.getString(configKeys.SERVER_NAME)
 	local loginStr = "Welcome to " .. serverName .. "!"
 	if player:getLastLoginSaved() <= 0 then

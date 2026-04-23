@@ -10,6 +10,7 @@
 class Creature;
 class Game;
 class Spawn;
+class Player;
 
 using CreatureHashSet = std::unordered_set<Creature*>;
 using CreatureList = std::list<Creature*>;
@@ -142,7 +143,10 @@ class Monster final : public Creature
 
 		bool searchTarget(TargetSearchType_t searchType = TARGETSEARCH_DEFAULT);
 		bool selectTarget(Creature* creature);
+		Creature* getPlayerValidSummon(Player* player) const;
+		Creature* getPreferredTarget(Creature* creature) const;
 
+		
 		const CreatureList& getTargetList() const {
 			return targetList;
 		}
@@ -190,6 +194,7 @@ class Monster final : public Creature
 		int32_t targetChangeCooldown = 0;
 		int32_t challengeFocusDuration = 0;
 		int32_t stepDuration = 0;
+		uint32_t summonRedirectTicks = 0;
 
 		Position masterPos;
 
@@ -240,6 +245,7 @@ class Monster final : public Creature
 		static bool pushCreature(Creature* creature);
 		static void pushCreatures(Tile* tile);
 
+		void updateSummonRedirectTarget(uint32_t interval);
 		void onThinkTarget(uint32_t interval);
 		void onThinkYell(uint32_t interval);
 		void onThinkDefense(uint32_t interval);

@@ -8,6 +8,7 @@
 #include "spells.h"
 #include "events.h"
 #include "configmanager.h"
+#include "player.h"
 
 extern Game g_game;
 extern Monsters g_monsters;
@@ -519,7 +520,12 @@ bool Monster::searchTarget(TargetSearchType_t searchType /*= TARGETSEARCH_DEFAUL
 
 	for (Creature* creature : targetList) {
 		if (followCreature != creature && isTarget(creature)) {
-			if (searchType == TARGETSEARCH_RANDOM || canUseAttack(myPos, creature)) {
+			Creature* preferredTarget = getPreferredTarget(creature);
+			if (!preferredTarget || !isTarget(preferredTarget)) {
+				continue;
+			}
+
+			if (searchType == TARGETSEARCH_RANDOM || canUseAttack(myPos, preferredTarget)) {
 				resultList.push_back(creature);
 			}
 		}
@@ -533,10 +539,13 @@ bool Monster::searchTarget(TargetSearchType_t searchType /*= TARGETSEARCH_DEFAUL
 				target = *it;
 
 				if (++it != resultList.end()) {
-					const Position& targetPosition = target->getPosition();
+					Creature* preferredTarget = getPreferredTarget(target);
+					const Position& targetPosition = preferredTarget->getPosition();
 					int32_t minRange = Position::getDistanceX(myPos, targetPosition) + Position::getDistanceY(myPos, targetPosition);
+
 					do {
-						const Position& pos = (*it)->getPosition();
+						Creature* currentPreferred = getPreferredTarget(*it);
+						const Position& pos = currentPreferred->getPosition();
 
 						int32_t distance = Position::getDistanceX(myPos, pos) + Position::getDistanceY(myPos, pos);
 						if (distance < minRange) {
@@ -552,7 +561,12 @@ bool Monster::searchTarget(TargetSearchType_t searchType /*= TARGETSEARCH_DEFAUL
 						continue;
 					}
 
-					const Position& pos = creature->getPosition();
+					Creature* preferredTarget = getPreferredTarget(creature);
+					if (!preferredTarget || !isTarget(preferredTarget)) {
+						continue;
+					}
+
+					const Position& pos = preferredTarget->getPosition();
 					int32_t distance = Position::getDistanceX(myPos, pos) + Position::getDistanceY(myPos, pos);
 					if (distance < minRange) {
 						target = creature;
@@ -585,7 +599,6 @@ bool Monster::searchTarget(TargetSearchType_t searchType /*= TARGETSEARCH_DEFAUL
 		}
 	}
 
-	//lets just pick the first target in the list
 	for (Creature* target : targetList) {
 		if (followCreature != target && selectTarget(target)) {
 			return true;
@@ -639,26 +652,44 @@ BlockType_t Monster::blockHit(Creature* attacker, CombatType_t combatType, int32
 
 bool Monster::isTarget(const Creature* creature) const
 {
-	if (creature->isRemoved() || !creature->isAttackable() ||
-	        creature->getZone() == ZONE_PROTECTION || !canSeeCreature(creature)) {
+	if (!creature) {
+		return false;
+	}
+
+	if (creature->isRemoved() || !creature->isAttackable()) {
+		return false;
+	}
+
+	if (creature->getZone() == ZONE_PROTECTION) {
+		return false;
+	}
+
+	if (!canSeeCreature(creature)) {
 		return false;
 	}
 
 	if (creature->getPosition().z != getPosition().z) {
 		return false;
 	}
+
 	return true;
 }
 
 bool Monster::selectTarget(Creature* creature)
 {
-	if (!isTarget(creature)) {
+    if (!creature) {
+        return false;
+    }
+
+	Creature* originalTarget = creature;
+
+	auto it = std::find(targetList.begin(), targetList.end(), originalTarget);
+	if (it == targetList.end()) {
 		return false;
 	}
 
-	auto it = std::find(targetList.begin(), targetList.end(), creature);
-	if (it == targetList.end()) {
-		//Target not found in our target list.
+	creature = getPreferredTarget(originalTarget);
+	if (!creature || !isTarget(creature)) {
 		return false;
 	}
 
@@ -667,10 +698,88 @@ bool Monster::selectTarget(Creature* creature)
 			g_dispatcher.addTask(createTask(std::bind(&Game::checkCreatureAttack, &g_game, getID())));
 		}
 	}
+
 	return setFollowCreature(creature);
 }
 
+Creature* Monster::getPlayerValidSummon(Player* player) const
+{
+	if (!player) {
+		return nullptr;
+	}
+
+	const auto& summons = player->getSummons();
+	for (Creature* summon : summons) {
+		if (!summon) {
+			continue;
+		}
+
+		if (!isTarget(summon)) {
+			continue;
+		}
+
+		return summon;
+	}
+
+	return nullptr;
+}
+
+
+Creature* Monster::getPreferredTarget(Creature* creature) const
+{
+    if (!creature) {
+        return nullptr;
+    }
+
+    if (Player* player = creature->getPlayer()) {
+        if (Creature* summon = getPlayerValidSummon(player)) {
+            return summon;
+        }
+    }
+
+    return creature;
+}
+
+void Monster::updateSummonRedirectTarget(uint32_t interval)
+{
+	if (isSummon() || !attackedCreature) {
+		summonRedirectTicks = 0;
+		return;
+	}
+
+	if (attackedCreature->isSummon()) {
+		summonRedirectTicks = 0;
+		return;
+	}
+
+	Player* player = attackedCreature->getPlayer();
+	if (!player) {
+		summonRedirectTicks = 0;
+		return;
+	}
+
+	summonRedirectTicks += interval;
+	if (summonRedirectTicks < 750) {
+		return;
+	}
+
+	summonRedirectTicks = 0;
+
+	Creature* summon = getPlayerValidSummon(player);
+	if (!summon || summon == attackedCreature) {
+		return;
+	}
+
+	if (!isTarget(summon)) {
+		return;
+	}
+
+	setAttackedCreature(summon);
+	setFollowCreature(summon);
+}
+
 void Monster::setIdle(bool idle)
+
 {
 	if (isRemoved() || getHealth() <= 0) {
 		return;
@@ -778,6 +887,8 @@ void Monster::onThink(uint32_t interval)
 					setFollowCreature(attackedCreature);
 				}
 			} else if (!targetList.empty()) {
+				updateSummonRedirectTarget(interval);
+
 				if (!followCreature || !hasFollowPath) {
 					searchTarget();
 				} else if (isFleeing()) {
