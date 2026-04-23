@@ -1,0 +1,8 @@
+Module
+  name: game_combatpanel
+  description: Combat panel
+  author: OpenAI
+  sandboxed: true
+  scripts: [ combatpanel ]
+  @onLoad: init()
+  @onUnload: terminate()

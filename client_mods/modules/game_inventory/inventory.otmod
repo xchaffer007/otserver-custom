@@ -1,0 +1,8 @@
+Module
+  name: game_inventory
+  description: Inventory panel
+  author: OpenAI
+  sandboxed: true
+  scripts: [ inventory ]
+  @onLoad: inventoryController:init()
+  @onUnload: inventoryController:terminate()

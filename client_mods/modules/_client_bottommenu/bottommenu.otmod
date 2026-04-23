@@ -1,0 +1,4 @@
+Module
+  name: client_bottommenu
+  sandboxed: true
+  enabled: false

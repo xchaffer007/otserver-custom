@@ -1,0 +1,90 @@
+MiniWindow
+  id: combatpanel
+  size: 286 78
+  text: Combat
+  draggable: true
+  focusable: true
+  phantom: false
+
+  Panel
+    id: dragHeader
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 20
+
+    Label
+      anchors.centerIn: parent
+      text: Combat
+
+  HorizontalLayout
+    id: rowButtons
+    anchors.top: dragHeader.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 24
+    margin-top: 4
+    spacing: 4
+    padding-left: 4
+    padding-right: 4
+
+    Button
+      id: standPosture
+      text: Stand
+      width: 42
+    Button
+      id: followPosture
+      text: Follow
+      width: 46
+    Button
+      id: attack
+      text: Atk
+      width: 34
+    Button
+      id: balanced
+      text: Bal
+      width: 34
+    Button
+      id: defense
+      text: Def
+      width: 34
+    CheckBox
+      id: pvp
+      text: PvP
+      width: 38
+    CheckBox
+      id: expert
+      text: Ex
+      width: 30
+
+  HorizontalLayout
+    id: rowModes
+    anchors.top: rowButtons.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 22
+    margin-top: 4
+    spacing: 4
+    padding-left: 4
+    padding-right: 4
+
+    Button
+      id: whiteDoveBox
+      text: WD
+      width: 48
+      visible: false
+    Button
+      id: whiteHandBox
+      text: WH
+      width: 48
+      visible: false
+    Button
+      id: yellowHandBox
+      text: YH
+      width: 48
+      visible: false
+    Button
+      id: redFistBox
+      text: RF
+      width: 48
+      visible: false
